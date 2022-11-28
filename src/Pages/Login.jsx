@@ -1,16 +1,18 @@
-import { useRef, useState, useEffect} from "react";
-import useAuth from '../hooks/useAuth'
+import { useRef, useState, useEffect } from "react";
+import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
-import {Link, useNavigate, useLocation} from 'react-router-dom';
-
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import styled, {GlobalStyle, Wrapper, Form1, Title, Input, Button} from "../components/Styled.Components"
 const LOGIN_URL = "/sessions";
+
+
 
 
 const Login = () => {
   const { setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/AdminPanel";
 
   const userRef = useRef();
   const errRef = useRef();
@@ -33,12 +35,12 @@ const Login = () => {
     try {
       const response = await axios.post(LOGIN_URL, { username, password });
       console.log(JSON.stringify(response?.data));
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({ username, password, roles, accessToken });
+      const accessToken = response.data.token;
+      localStorage.setItem("token", accessToken);
       setUsername("");
       setPassword("");
-      navigate(from, {replace:true});
+      alert("Sucessfully Logged in");
+      navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -49,25 +51,17 @@ const Login = () => {
       } else {
         setErrMsg("Login Failed");
       }
-      errRef.current.focus();
     }
   };
 
   return (
-        <section>
-          <p
-            ref={errRef}
-            className={errMsg ? "errmsg" : "offscreen"}
-            aria-live="assertive"
-          >
-            {errMsg}
-          </p>
-          <h1>Sign In</h1>
-          
-          <form onSubmit={handleSubmit}>
-          <p>
-            <label htmlFor="username">Username:</label>
-            <input
+    <>
+      <GlobalStyle />
+      <Wrapper>
+        <Form1 onSubmit={handleSubmit}>
+        <Title>SIGN IN</Title>
+        <label htmlFor="username">Username:</label>
+            <Input
               type="text"
               id="username"
               ref={userRef}
@@ -75,22 +69,21 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
               value={username}
               required
-            /></p>
-              <p>
+            />
             <label htmlFor="password">Password:</label>
-            <input
+            <Input
               type="password"
               id="password"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required
-            /></p>
-            <p>
-              <button>Sign In</button>
-            </p>
-          </form>
-        </section>
-  )
-};
+            />
+          <Button>Login</Button>
+        </Form1>
+      </Wrapper>
+    </>
+  );
+}
+
 
 export default Login;

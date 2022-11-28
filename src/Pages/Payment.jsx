@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-export default function Payment() {
+
+function Payment() {
+  const [card_id, getCard_id] = useState("");
   return (
     <div>
-            <h1>uno</h1>
+      <h1>1234567</h1>
     </div>
   )
 }
+
+export default Payment
